@@ -2,7 +2,7 @@
 name = "filefinder"
 version = "0.1.0"
 description = ""
-authors = ["Malhar <malharpatil45@gmail.com>"]
+authors = ["Arun <arunkg99@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]

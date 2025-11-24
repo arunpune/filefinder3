@@ -1,6 +1,10 @@
 import sys
 from PyInstaller.utils.hooks import collect_data_files
 import os
+import warnings
+# Suppress pkg_resources deprecation warning from dependencies
+warnings.filterwarnings("ignore", category=UserWarning, module=".*pkg_resources.*")
+warnings.filterwarnings("ignore", category=UserWarning, message=".*pkg_resources.*")
 import pandas as pd
 import psutil
 import mysql.connector
@@ -79,7 +83,7 @@ def create_db_connection(host, port, database_name,username,password):
             logger.error(f"Error getting Database connection: {str(e)}", exc_info=True)        
         
     except Exception as e:
-        print(f"Error getting Database connection: {str(e)}", exc_info=True)
+        #print(f"Error getting Database connection: {str(e)}", exc_info=True)
         logger.error(f"Error getting Database connection: {str(e)}", exc_info=True)
         return None
 
@@ -1091,10 +1095,15 @@ if __name__ == "__main__":
         logger.info("********************End-Log********************")
         log_folder = os.path.dirname(os.path.abspath(__file__))
         if os.getenv("ENABLE_APP_LOG_TO_DB")=="true":
-            insert_log_file_to_mysql(connection, log_folder, ipaddrs, hostname, employee_username,start_time)
+            #insert_log_file_to_mysql(connection, log_folder, ipaddrs, hostname, employee_username,start_time)
+            # Only attempt log insertion if connection exists
+            if connection is not None:
+                insert_log_file_to_mysql(connection, log_folder, ipaddrs, hostname, employee_username, start_time)
+            else:
+                logger.error("Cannot insert log file - database connection is None")
         print("Press Esc to exit...")
         connection.close()
-        while keyboard.is_pressed('Esc') == False:
+        while not keyboard.is_pressed('Esc'):
             pass
 
         
